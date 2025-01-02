@@ -3,9 +3,9 @@ import requests
 
 
 
-dashboard_token = "<token>"
-dashboard_url = "<dashboard-url>"
-merchant = "<merchantId>"
+dashboard_token =  "<token>"
+dashboard_url = "http://localhost:8018"
+merchant = "favorit0-0000-0000-0000-00000favorit"
 city = "Bangalore"
 
 def getRideOtpBpp(rideId) :

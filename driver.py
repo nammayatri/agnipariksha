@@ -11,15 +11,15 @@ from mobileNumberGenerator  import generate_random_mobile_number
 class DriverApp(HttpUser):
 
     wait_time = between(1, 5)
-    host = "<Host-Url-Here>"
+    host = "https://api.sandbox.beckn.juspay.in/dev/dobpp/"
     status = "IDLE"
     @task
     def on_start(self):
         self.status = "IDLE"
         self.environment_vars = {
             "driver_merchant_id": "7f7896dd-787e-4a0b-8675-e9e6fe93bb8f",
-            "baseURL_namma_P" : "<Host-Url-Here>/dev/dobpp/ui",
-            "baseUrl_lts" : "<Host-Url-Here>/dev/dobpp/ui",
+            "baseURL_namma_P" : "https://api.sandbox.beckn.juspay.in/dev/dobpp/ui",
+            "baseUrl_lts" : "https://api.sandbox.beckn.juspay.in/dev/dobpp/ui",
             "origin-lat": 12.942247365419119,
             "origin-lon": 77.62198115675885,
             "dest-lat": 12.9325404,
@@ -63,20 +63,25 @@ class DriverApp(HttpUser):
         headers = {'Content-Type': 'application/json;charset=utf-8'}
         response = self.client.post(f"{self.get_environment_variable('baseURL_namma_P')}/auth/{auth_id}/verify", json=payload, headers=headers)
         if response.status_code == 200:
+            print ("response is : ", response.text)
             jsonData = response.json()
             add_vehicle(jsonData["person"]["id"])
+            print("driver id: ", jsonData["person"]["id"])
             self.set_environment_variable("driver_token", jsonData["token"])
         time.sleep(0.5)
 
     def set_online_offline(self):
         headers = {'Accept': 'application/json;charset=utf-8', 'token': self.get_environment_variable("driver_token")}
+        print("Driver is Online")
         response = self.client.post(f"{self.get_environment_variable('baseURL_namma_P')}/driver/setActivity?active=true&mode=\"ONLINE\"", headers=headers)
+        print("response for online: ", response.text)
         time.sleep(0.5)
 
     def get_profile(self):
         headers = {'token': self.get_environment_variable("driver_token")}
         response = self.client.get(f"{self.get_environment_variable('baseURL_namma_P')}/driver/profile", headers=headers)
         if response.status_code == 200:
+            print("response: ", response.text)
             body = response.json()
             self.set_environment_variable("mId", body["organization"]["id"])
             self.set_environment_variable("vt", body["linkedVehicle"]["variant"])

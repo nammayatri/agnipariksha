@@ -3,8 +3,8 @@ import random
 import string
 
 
-merchantId = '<merchant-id>'
-driverId = 'driverId'
+merchantId = 'NAMMA_YATRI_PARTNER'
+# driverId = 'favorit-suv-000000000000000000000000'
 token = "<dashboard-token>"
 
 
@@ -16,18 +16,21 @@ def generate_random_registration_number():
     return f"{letters1}{digits}{letters2}{digits2}"
 
 def enable_driver(driverId):
-    url = f"<host>/api/dev/bpp/driver-offer/{merchantId}/driver/{driverId}/enable"
+    print("Driver ID is: ", driverId)
+    print("token is: ", token)
+    print("merchantId is: ", merchantId)
+    url = f"https://dashboard.integ.moving.tech/api/dev/bpp/driver-offer/{merchantId}/Kochi/driver/{driverId}/enable"
     headers = {
         "token": token,
         "Content-Type": "application/json",
         "Authorization": "Bearer token"
     }
     response = requests.post(url, headers=headers)
-    print(response.status_code)
+    print("response hai: ", response.status_code)
     print(response.json())
 
 def add_vehicle(driverId):
-    url = f"<host>/api/dev/bpp/driver-offer/{merchantId}/driver/{driverId}/addVehicle"
+    url = f"https://dashboard.integ.moving.tech/api/dev/bpp/driver-offer/{merchantId}/std:0484/driver/{driverId}/addVehicle"
     headers = {
         "token": token,
         "Content-Type": "application/json",
