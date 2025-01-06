@@ -18,8 +18,8 @@ class DriverApp(HttpUser):
         self.status = "IDLE"
         self.environment_vars = {
             "driver_merchant_id": "7f7896dd-787e-4a0b-8675-e9e6fe93bb8f",
-            "baseURL_namma_P" : "<Host-Url-Here>/dev/dobpp/ui",
-            "baseUrl_lts" : "<Host-Url-Here>/dev/dobpp/ui",
+            "baseURL_namma_P" : f"{DriverApp.host.rstrip("/")}/dev/dobpp/ui",
+            "baseUrl_lts" : f"{DriverApp.host.rstrip("/")}/dev/dobpp/ui",
             "origin-lat": 12.942247365419119,
             "origin-lon": 77.62198115675885,
             "dest-lat": 12.9325404,

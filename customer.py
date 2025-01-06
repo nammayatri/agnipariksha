@@ -14,8 +14,8 @@ class CustomerApp(HttpUser):
         self.environment_vars = {
             "customer_merchant_id": "NAMMA_YATRI",
             "customer_chosen_vehicle_variant": "AUTO_RICKSHAW",
-            "baseUrl_lts" : "<Host-Name-here>/dev/dobpp/ui",
-            "baseUrl_app": "<Host-Name-here>/dev/app/v2",
+            "baseUrl_lts" : f"{CustomerApp.host.rstrip('/')}/dev/dobpp/ui",
+            "baseUrl_app": f"{CustomerApp.host.rstrip('/')}/dev/app/v2",
             "origin-lat": 12.942247365419119,
             "origin-lon": 77.62198115675885,
             "dest-lat": 12.9325404,

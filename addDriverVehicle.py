@@ -6,6 +6,7 @@ import string
 merchantId = '<merchant-id>'
 driverId = 'driverId'
 token = "<dashboard-token>"
+host = "<Host-Url-Here>"
 
 
 def generate_random_registration_number():
@@ -16,7 +17,7 @@ def generate_random_registration_number():
     return f"{letters1}{digits}{letters2}{digits2}"
 
 def enable_driver(driverId):
-    url = f"<host>/api/dev/bpp/driver-offer/{merchantId}/driver/{driverId}/enable"
+    url = f"{host.rstrip("/")}/api/dev/bpp/driver-offer/{merchantId}/driver/{driverId}/enable"
     headers = {
         "token": token,
         "Content-Type": "application/json",
@@ -27,7 +28,7 @@ def enable_driver(driverId):
     print(response.json())
 
 def add_vehicle(driverId):
-    url = f"<host>/api/dev/bpp/driver-offer/{merchantId}/driver/{driverId}/addVehicle"
+    url = f"{host.rstrip("/")}/api/dev/bpp/driver-offer/{merchantId}/driver/{driverId}/addVehicle"
     headers = {
         "token": token,
         "Content-Type": "application/json",
