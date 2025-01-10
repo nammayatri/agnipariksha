@@ -3,19 +3,26 @@ import json
 import datetime
 import time
 from mobileNumberGenerator  import generate_random_mobile_number
+import os, sys
+from dotenv import load_dotenv
 
 class CustomerApp(HttpUser):
     wait_time = between(1, 5)
-    host = "<Host-Name-here>"
     status = "IDLE"
     @task
     def on_start(self):
+        sys.setrecursionlimit(1000000)
+        load_dotenv()
+        LTS_HOST = os.getenv('LTS_HOST'); LTS_HOST = LTS_HOST if LTS_HOST else "<lts-host-here>"
+        CUSTOMER_HOST = os.getenv('CUSTOMER_HOST'); CUSTOMER_HOST = CUSTOMER_HOST if CUSTOMER_HOST else "<customer-host-here>"
+
+        print(CUSTOMER_HOST, LTS_HOST)
         self.status = "IDLE"
         self.environment_vars = {
             "customer_merchant_id": "NAMMA_YATRI",
             "customer_chosen_vehicle_variant": "AUTO_RICKSHAW",
-            "baseUrl_lts" : "<Host-Name-here>/dev/dobpp/ui",
-            "baseUrl_app": "<Host-Name-here>/dev/app/v2",
+            "baseUrl_lts" : f"{LTS_HOST}/ui",
+            "baseUrl_app": f"{CUSTOMER_HOST}/v2",
             "origin-lat": 12.942247365419119,
             "origin-lon": 77.62198115675885,
             "dest-lat": 12.9325404,
