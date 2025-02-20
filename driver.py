@@ -1,25 +1,34 @@
 from locust import HttpUser, task, between
-import json
 import datetime
 import time
 from lib import getRideOtpBpp
 from addDriverVehicle import add_vehicle
 from mobileNumberGenerator  import generate_random_mobile_number
-
-
+import os, sys
+from dotenv import load_dotenv
 
 class DriverApp(HttpUser):
-
     wait_time = between(1, 5)
-    host = "<Host-Url-Here>"
     status = "IDLE"
     @task
     def on_start(self):
+        sys.setrecursionlimit(1000000)
+        load_dotenv()
+        LTS_HOST = os.getenv('LTS_HOST'); LTS_HOST = LTS_HOST if LTS_HOST else "<lts-host-here>"
+        DRIVER_HOST = os.getenv('DRIVER_HOST'); DRIVER_HOST = DRIVER_HOST if DRIVER_HOST else "<driver-host-here>"
+        BPP_DASHBOARD_HOST = os.getenv('BPP_DASHBOARD_HOST'); BPP_DASHBOARD_HOST = BPP_DASHBOARD_HOST if BPP_DASHBOARD_HOST else "<bpp-dashboard-host-here>"
+        BPP_DASHBOARD_TOKEN = os.getenv('BPP_DASHBOARD_TOKEN'); BPP_DASHBOARD_TOKEN = BPP_DASHBOARD_TOKEN if BPP_DASHBOARD_TOKEN else "<bpp-dashboard-token-here>"
+        DRIVER_MERCHANT_ID = os.getenv('DRIVER_MERCHANT_ID'); DRIVER_MERCHANT_ID = DRIVER_MERCHANT_ID if DRIVER_MERCHANT_ID else "<driver-merchant-id-here>"
+        DRIVER_CITY = os.getenv('DRIVER_CITY'); DRIVER_CITY = DRIVER_CITY if DRIVER_CITY else "<driver-city-here>"
         self.status = "IDLE"
         self.environment_vars = {
-            "driver_merchant_id": "7f7896dd-787e-4a0b-8675-e9e6fe93bb8f",
-            "baseURL_namma_P" : "<Host-Url-Here>/dev/dobpp/ui",
-            "baseUrl_lts" : "<Host-Url-Here>/dev/dobpp/ui",
+            "driver_merchant_id": f"{DRIVER_MERCHANT_ID}",
+            "short_merchant_id": "NAMMA_YATRI_PARTNER",
+            "baseURL_namma_P" : f"{DRIVER_HOST}/ui",
+            "baseUrl_lts" : f"{LTS_HOST}/ui",
+            "bpp_dashboard_host": BPP_DASHBOARD_HOST,
+            "bpp_dashboard_token": BPP_DASHBOARD_TOKEN,
+            "city" : DRIVER_CITY,
             "origin-lat": 12.942247365419119,
             "origin-lon": 77.62198115675885,
             "dest-lat": 12.9325404,
@@ -64,7 +73,11 @@ class DriverApp(HttpUser):
         response = self.client.post(f"{self.get_environment_variable('baseURL_namma_P')}/auth/{auth_id}/verify", json=payload, headers=headers)
         if response.status_code == 200:
             jsonData = response.json()
-            add_vehicle(jsonData["person"]["id"])
+            shortMerchantId = self.get_environment_variable('short_merchant_id')
+            bppDashboardHost = self.get_environment_variable('bpp_dashboard_host')
+            bppDashboardToken = self.get_environment_variable('bpp_dashboard_token')
+            city = self.get_environment_variable('city')
+            add_vehicle(jsonData["person"]["id"], bppDashboardHost, bppDashboardToken, shortMerchantId, city)
             self.set_environment_variable("driver_token", jsonData["token"])
         time.sleep(0.5)
 
@@ -183,8 +196,12 @@ class DriverApp(HttpUser):
             "Content-Type": "application/json;charset=utf-8",
             "token": self.get_environment_variable("driver_token")
         }
+        shortMerchantId = self.get_environment_variable('short_merchant_id')
+        bppDashboardHost = self.get_environment_variable('bpp_dashboard_host')
+        bppDashboardToken = self.get_environment_variable('bpp_dashboard_token')
+        city = self.get_environment_variable('city')
         payload = {
-            "rideOtp": getRideOtpBpp(self.get_environment_variable("driver_ride_id")),
+            "rideOtp": getRideOtpBpp(self.get_environment_variable("driver_ride_id"), bppDashboardHost, bppDashboardToken, shortMerchantId, city),
             "point": {
                 "lat": self.get_environment_variable("origin-lat"),
                 "lon": self.get_environment_variable("origin-lon")
